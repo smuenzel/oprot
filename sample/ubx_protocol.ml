@@ -1,15 +1,10 @@
 open! Core
 open! Int_repr
 
+open! Oprot
+open! Oprot.Dsl
+
 module type D = sig
-  module Field_name : String_id.S
-  module Message_name : String_id.S
-  module Scope_name : String_id.S
-
-  val (?:) : string -> Field_name.t
-  val (?@) : string -> Message_name.t
-  val (?@@) : string -> Scope_name.t
-
   module Typ : sig
     type 't t
 
