@@ -4,9 +4,11 @@ open! Int_repr
 module type D = sig
   module Field_name : String_id.S
   module Message_name : String_id.S
+  module Scope_name : String_id.S
 
   val (?:) : string -> Field_name.t
   val (?@) : string -> Message_name.t
+  val (?@@) : string -> Scope_name.t
 
   module Typ : sig
     type 't t
@@ -87,7 +89,7 @@ module type D = sig
     -> entry
 
   val message_name
-    : ?scope:string
+    : ?scope:Scope_name.t
     -> Message_name.t
     -> entry
     -> entry
@@ -138,7 +140,7 @@ module Make(D : D) = struct
       ; field Typ.Raw.bit8 ?:"ack_class_id"
       ; field Typ.Raw.bit8 ?:"ack_message_id"
       ]
-    |> message_name ~scope:"class" ?@"ack"
+    |> message_name ~scope:?@@"class" ?@"ack"
 
   let messages_cfg =
     group
@@ -215,7 +217,7 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" ?@"cfg"
+    |> message_name ~scope:?@@"class" ?@"cfg"
 
   let messages_mon =
     group
@@ -247,7 +249,7 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" ?@"mon"
+    |> message_name ~scope:?@@"class" ?@"mon"
 
   let messages_nav =
     group
@@ -319,7 +321,7 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" ?@"nav"
+    |> message_name ~scope:?@@"class" ?@"nav"
 
   let messages_rxm =
     group
@@ -401,7 +403,7 @@ module Make(D : D) = struct
                 ])
           ]
       ]
-    |> message_name ~scope:"class" ?@"rxm"
+    |> message_name ~scope:?@@"class" ?@"rxm"
 
   let messages =
     select ?:"class_id" Typ.Raw.bit8
