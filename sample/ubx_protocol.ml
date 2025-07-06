@@ -1,8 +1,6 @@
 open! Core
 open! Int_repr
 
-module I = Iobuf
-
 module type D = sig
   module Field_name : String_id.S
 
