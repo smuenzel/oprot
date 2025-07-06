@@ -6,25 +6,16 @@ open! Oprot.Dsl
 
 module type D = sig
 
-  module Constraint : sig
-    type 'a t
-
-    val constant : 'a -> 'a t
-
-    (* CR smuenzel: add type conversion? *)
-    val computation : Computation.t -> 'a t
-  end
-
   type entry
 
   val field
-    :  ?constraint_:'a Constraint.t
+    :  ?constraint_:'a Constraint.Pre.t
     -> 'a Typ.t
     -> Field_name.t
     -> entry
 
   val field_reserved
-    :  ?constraint_:'a Constraint.t
+    :  ?constraint_:'a Constraint.Pre.t
     -> 'a Typ.t
     -> entry
 
@@ -48,13 +39,13 @@ module type D = sig
     -> entry
 
   val repeating_group
-    :  ?count:int Constraint.t
+    :  ?count:int Constraint.Pre.t
     -> Field_name.t
     -> entry list
     -> entry
 
   val buffer
-    :  ?length:int Constraint.t
+    :  ?length:int Constraint.Pre.t
     -> Field_name.t
     -> entry
 end
