@@ -127,9 +127,19 @@ let char =
       }
   }
 
+module Fixed_array = struct
+  include Type_equal.Id.Create1(struct
+      type 'a t = 'a array
+
+      let sexp_of_t = sexp_of_array
+
+      let name = "Fixed_array"
+    end)
+
+end
+
 let fixed_array (type a) size (base_type : a t) : a array t =
-  let sexp_of_a = Type_equal.Id.to_sexp base_type.id in
-  { id = Type_equal.Id.create ~name:"Fixed_array" [%sexp_of: a array]
+  { id = Fixed_array.type_equal_id base_type.id
   ; descriptor =
       { size_in_bytes = size * base_type.descriptor.size_in_bytes
       }
