@@ -1,0 +1,4 @@
+(library
+ (name oprot_sample)
+ (libraries core oprot)
+ (preprocess (pps ppx_jane)))

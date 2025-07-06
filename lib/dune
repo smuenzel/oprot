@@ -1,3 +1,5 @@
 (library
  (public_name oprot)
- (name oprot))
+ (name oprot)
+ (libraries core core_kernel.iobuf)
+ (preprocess (pps ppx_jane)))
