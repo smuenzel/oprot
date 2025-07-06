@@ -6,17 +6,6 @@ open! Oprot.Dsl
 
 module type D = sig
 
-  module Computation : sig
-    type t
-
-    val offsetof : Field_name.t -> t
-
-    val field_value : Field_name.t -> t
-
-    val (+) : t -> t -> t
-    val (-) : t -> t -> t
-  end
-
   module Constraint : sig
     type 'a t
 
