@@ -3,8 +3,10 @@ open! Int_repr
 
 module type D = sig
   module Field_name : String_id.S
+  module Message_name : String_id.S
 
   val (?:) : string -> Field_name.t
+  val (?@) : string -> Message_name.t
 
   module Typ : sig
     type 't t
@@ -86,7 +88,7 @@ module type D = sig
 
   val message_name
     : ?scope:string
-    -> string
+    -> Message_name.t
     -> entry
     -> entry
 
@@ -130,23 +132,23 @@ module Make(D : D) = struct
   let messages_ack =
     group
       [ select ?:"message_id" Typ.Raw.bit8
-          [ Uint8.of_base_int_exn 0x01, message_name "ack" (group [])
-          ; Uint8.of_base_int_exn 0x00, message_name "nack" (group [])
+          [ Uint8.of_base_int_exn 0x01, message_name ?@"ack" (group [])
+          ; Uint8.of_base_int_exn 0x00, message_name ?@"nack" (group [])
           ]
       ; field Typ.Raw.bit8 ?:"ack_class_id"
       ; field Typ.Raw.bit8 ?:"ack_message_id"
       ]
-    |> message_name ~scope:"class" "ack"
+    |> message_name ~scope:"class" ?@"ack"
 
   let messages_cfg =
     group
       [ select ?:"message_id" Typ.Raw.bit8
-          [ Uint8.of_base_int_exn 0x13, message_name "ant"
+          [ Uint8.of_base_int_exn 0x13, message_name ?@"ant"
               (group
                  [ field Typ.Int.uint16 ?:"antenna_flag_mask"
                  ; field Typ.Int.uint16 ?:"antenna_pin_configuration"
                  ])
-          ; Uint8.of_base_int_exn 0x09, message_name "cfg"
+          ; Uint8.of_base_int_exn 0x09, message_name ?@"cfg"
               (group
                  [ field Typ.Int.uint32 ?:"clear_mask"
                  ; field Typ.Int.uint32 ?:"save_mask"
@@ -155,13 +157,13 @@ module Make(D : D) = struct
                      [ field Typ.Int.uint8 ?:"device_mask"
                      ]
                  ])
-          ; Uint8.of_base_int_exn 0x04, message_name "rst"
+          ; Uint8.of_base_int_exn 0x04, message_name ?@"rst"
               (group
                 [ field Typ.Int.uint16 ?:"nav_bbr_mask"
                 ; field Typ.Int.uint8 ?:"reset_mode"
                 ; field_reserved Typ.Int.uint8
                 ])
-          ; Uint8.of_base_int_exn 0x8c, message_name "valdel"
+          ; Uint8.of_base_int_exn 0x8c, message_name ?@"valdel"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; field Typ.Int.uint8 ?:"layers"
@@ -180,7 +182,7 @@ module Make(D : D) = struct
                      [ field Typ.Int.uint32 ?:"key"
                      ]
                  ])
-          ; Uint8.of_base_int_exn 0x8b, message_name "valget"
+          ; Uint8.of_base_int_exn 0x8b, message_name ?@"valget"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; field Typ.Int.uint8 ?:"layer"
@@ -194,7 +196,7 @@ module Make(D : D) = struct
                        buffer ?:"cfg_data"
                      ]
                  ])
-          ; Uint8.of_base_int_exn 0x8a, message_name "valset"
+          ; Uint8.of_base_int_exn 0x8a, message_name ?@"valset"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; field Typ.Int.uint8 ?:"layers"
@@ -213,12 +215,12 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" "cfg"
+    |> message_name ~scope:"class" ?@"cfg"
 
   let messages_mon =
     group
       [ select ?:"message_id" Typ.Raw.bit8
-          [ Uint8.of_base_int_exn 0x38, message_name "rf"
+          [ Uint8.of_base_int_exn 0x38, message_name ?@"rf"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; select ?:"message_version" Typ.Int.uint8
@@ -245,12 +247,12 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" "mon"
+    |> message_name ~scope:"class" ?@"mon"
 
   let messages_nav =
     group
       [ select ?:"message_id" Typ.Raw.bit8
-          [ Uint8.of_base_int_exn 0x01, message_name "clock"
+          [ Uint8.of_base_int_exn 0x01, message_name ?@"clock"
               (group
                  [ field Typ.Int.uint32 ?:"time_of_week"
                  ; field Typ.Int.int32 ?:"bias"
@@ -258,11 +260,11 @@ module Make(D : D) = struct
                  ; field Typ.Int.uint32 ?:"time_accuracy"
                  ; field Typ.Int.uint32 ?:"frequency_accuracy"
                  ])
-          ; Uint8.of_base_int_exn 0x61, message_name "end_of_epoch"
+          ; Uint8.of_base_int_exn 0x61, message_name ?@"end_of_epoch"
               (group
                  [ field Typ.Int.uint32 ?:"time_of_week"
                  ])
-          ; Uint8.of_base_int_exn 0x13, message_name "high_precision_solution_ecef"
+          ; Uint8.of_base_int_exn 0x13, message_name ?@"high_precision_solution_ecef"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; select ?:"message_version" Typ.Int.uint8
@@ -278,7 +280,7 @@ module Make(D : D) = struct
                  ; field Typ.Raw.bit8 ?:"flags"
                  ; field Typ.Int.uint32 ?:"position_accuracy"
                  ])
-          ; Uint8.of_base_int_exn 0x14, message_name "high_precision_solution_geodetic"
+          ; Uint8.of_base_int_exn 0x14, message_name ?@"high_precision_solution_geodetic"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; select ?:"message_version" Typ.Int.uint8
@@ -297,7 +299,7 @@ module Make(D : D) = struct
                  ; field Typ.Int.uint32 ?: "horizontal_accuracy"
                  ; field Typ.Int.uint32 ?: "vertical_accuracy"
                  ])
-          ; Uint8.of_base_int_exn 0x34, message_name "orbit"
+          ; Uint8.of_base_int_exn 0x34, message_name ?@"orbit"
               (group
                  [ field Typ.Int.uint32 ?:"time_of_week"
                  ; field Typ.Int.uint8 ?:"message_version"
@@ -317,12 +319,12 @@ module Make(D : D) = struct
                  ])
           ]
       ]
-    |> message_name ~scope:"class" "nav"
+    |> message_name ~scope:"class" ?@"nav"
 
   let messages_rxm =
     group
       [ select ?:"message_id" Typ.Raw.bit8
-          [ Uint8.of_base_int_exn 0x34, message_name "correction"
+          [ Uint8.of_base_int_exn 0x34, message_name ?@"correction"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; select ?:"message_version" Typ.Int.uint8
@@ -333,7 +335,7 @@ module Make(D : D) = struct
                  ; field Typ.Int.uint16 ?:"received_message_type"
                  ; field Typ.Int.uint16 ?:"received_message_subtype"
                  ])
-          ; Uint8.of_base_int_exn 0x14, message_name "measurement"
+          ; Uint8.of_base_int_exn 0x14, message_name ?@"measurement"
               (group
                  [ field Typ.Int.uint8 ?:"message_version"
                  ; select ?:"message_version" Typ.Int.uint8
@@ -368,7 +370,7 @@ module Make(D : D) = struct
                      ; field_reserved (Typ.fixed_array 2 Typ.Int.uint8)
                      ]
                  ])
-          ; Uint8.of_base_int_exn 0x15, message_name "raw_measurement"
+          ; Uint8.of_base_int_exn 0x15, message_name ?@"raw_measurement"
               (group
                 [ field Typ.Float.binary64 ?:"receiver_time_of_week"
                 ; field Typ.Int.uint16 ?:"receiver_week"
@@ -399,7 +401,7 @@ module Make(D : D) = struct
                 ])
           ]
       ]
-    |> message_name ~scope:"class" "rxm"
+    |> message_name ~scope:"class" ?@"rxm"
 
   let messages =
     select ?:"class_id" Typ.Raw.bit8
