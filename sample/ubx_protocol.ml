@@ -5,37 +5,6 @@ open! Oprot
 open! Oprot.Dsl
 
 module type D = sig
-  module Typ : sig
-    type 't t
-
-    module Raw : sig
-      val bit8 : uint8 t
-      val bit16 : uint16 t
-      val bit32 : uint32 t
-      val bit64 : uint64 t
-    end
-
-    module Int : sig
-      val uint8 : uint8 t
-      val uint16 : uint16 t
-      val uint32 : uint32 t
-      val uint64 : uint64 t
-
-      val int8 : int8 t
-      val int16 : int16 t
-      val int32 : int32 t
-      val int64 : int64 t
-    end
-
-    module Float : sig
-      val binary32 : float t
-      val binary64 : float t
-    end
-
-    val char : char t
-
-    val fixed_array : int -> 'a t -> 'a array t
-  end
 
   module Computation : sig
     type t
