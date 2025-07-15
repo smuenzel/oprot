@@ -1,4 +1,5 @@
 (library
  (name oprot_sample)
  (libraries core oprot)
+ (inline_tests)
  (preprocess (pps ppx_jane)))

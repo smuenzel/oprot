@@ -1,5 +1,5 @@
 (library
  (public_name oprot)
  (name oprot)
- (libraries core core_kernel.iobuf)
- (preprocess (pps ppx_jane)))
+ (libraries core core_kernel.iobuf hmap)
+ (preprocess (pps ppx_jane ppx_gen_rec)))
